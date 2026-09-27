@@ -2,130 +2,159 @@
 
 ## Project Overview
 
-The **GenAI Business Insight Agent** is an AI-powered analytics project built using **Python, PostgreSQL, SQL, Pandas, and the Gemini API**.
+The GenAI Business Insight Agent is a medium-sized analytics project built using Python, PostgreSQL, SQL, Pandas, and the Gemini API.
 
-The main purpose of this project is to help business users ask questions in plain English and receive data-backed answers without manually writing SQL.
+The goal of the project is to allow a business user to ask questions in plain English and receive data-backed answers without manually writing SQL.
 
-For example, a business user can ask:
+The system reads the PostgreSQL schema, asks Gemini to generate read-only SQL, validates the SQL for safety, executes it against the database, and then generates a concise business insight using the actual query result.
+
+---
+
+## Business Problem
+
+Business users often depend on analysts for ad-hoc questions such as:
 
 - What is the total revenue?
-- Which customers generated the highest revenue?
-- Which categories performed best?
-- Which products had the most returns?
+- Which customers generate the highest revenue?
+- Which categories are performing best?
+- Which products have the most returns?
 - Which month had the biggest revenue decline?
-- Which cities generated the highest revenue?
+- Which cities generate the highest revenue?
 - What is the total refund amount?
 
-The agent reads the real PostgreSQL schema, generates SQL using Gemini, validates the query for safety, executes it against PostgreSQL, and then explains the actual result in business language.
-
----
-
-## Why I Built This Project
-
-In real businesses, managers and stakeholders frequently ask ad-hoc questions that may not already exist in dashboards.
-
-Normally, an analyst has to:
-
-1. Understand the question
-2. Write SQL manually
-3. Execute the query
-4. Validate the result
-5. Explain the result to the stakeholder
-
-This process can take time, especially when many ad-hoc questions are asked.
-
-I built this project to demonstrate how **GenAI can assist the analytics workflow** while still keeping the final answer grounded in actual database results.
-
-The project does not allow Gemini to directly modify the database. Python acts as the control layer between Gemini and PostgreSQL.
-
----
-
-## Business Objective
-
-The main business objective was to create a system that can:
-
-- Understand natural-language business questions
-- Convert those questions into PostgreSQL SQL
-- Use the actual database schema
-- Prevent destructive SQL
-- Execute only approved read-only queries
-- Return verified query results
-- Convert technical results into business insights
-- Provide practical recommendations
+The project helps automate these questions while keeping SQL execution safe and result-grounded.
 
 ---
 
 ## Dataset
 
-The project uses a relational retail dataset containing hundreds of thousands of transactional records.
+The project uses a relational retail dataset with hundreds of thousands of records.
 
-The main tables used in the project are:
+Main tables used:
 
-- `customers`
-- `orders`
-- `order_items`
-- `products`
-- `categories`
-- `payments`
-- `returns`
-
-The dataset supports analysis across:
-
-- Revenue
-- Orders
-- Customers
-- Product categories
-- Product performance
-- Returns
-- Refunds
-- Customer location
-- Monthly trends
+- customers
+- orders
+- order_items
+- products
+- categories
+- payments
+- returns
 
 ---
 
-## Technology Stack
+## Tech Stack
 
-- **Python**
-- **Pandas**
-- **PostgreSQL**
-- **SQL**
-- **Gemini API**
-- **psycopg2**
-- **python-dotenv**
+- Python
+- Pandas
+- PostgreSQL
+- SQL
+- Gemini API
+- psycopg2
+- python-dotenv
 
 ---
 
 ## Project Architecture
 
+Business Question  
+→ Gemini understands the question  
+→ PostgreSQL schema context is provided  
+→ Gemini generates SQL  
+→ Python validates SQL  
+→ PostgreSQL executes the approved query  
+→ Actual query result is returned  
+→ Gemini generates business insight  
+→ Final recommendation is shown to the user
+
+---
+
+## Key Features
+
+- Natural language to SQL
+- Dynamic PostgreSQL schema reading
+- Read-only SQL validation
+- PostgreSQL query execution
+- Automatic SQL repair attempt
+- Gemini-based business insight generation
+- Result-grounded responses
+- Python/Pandas business analysis
+- Error handling for Gemini quota and server issues
+
+---
+
+## SQL Safety
+
+The project allows only read-only queries.
+
+Allowed:
+
+- SELECT
+- WITH
+
+Blocked:
+
+- INSERT
+- UPDATE
+- DELETE
+- DROP
+- ALTER
+- TRUNCATE
+- CREATE
+- GRANT
+- REVOKE
+
+This prevents the AI from modifying database data.
+
+---
+
+## Python Analysis
+
+Python and Pandas are used for:
+
+- Monthly revenue analysis
+- Month-over-month revenue change
+- Revenue decline detection
+- Category revenue contribution
+- Return and refund analysis
+
+---
+
+## Example Business Questions
+
+1. What is the total revenue?
+2. Which 5 customers generated the highest revenue?
+3. Which categories generated the highest revenue?
+4. Which products had the most returns?
+5. Which month had the biggest revenue decline?
+6. Which cities generated the highest revenue?
+7. What is the total refund amount?
+8. Which categories had the highest refund amount?
+
+---
+
+## Folder Structure
+
 ```text
-Business User
-     |
-     v
-Natural-Language Question
-     |
-     v
-Python Application
-     |
-     v
-Read PostgreSQL Schema
-     |
-     v
-Gemini API
-     |
-     v
-Generate SQL
-     |
-     v
-SQL Safety Validator
-     |
-     v
-PostgreSQL
-     |
-     v
-Actual Query Result
-     |
-     v
-Gemini Business Explanation
-     |
-     v
-Business Insight + Recommendation
+GenAI_Business_Insight_Agent/
+│
+├── data/
+│   ├── raw/
+│   └── cleaned/
+│
+├── outputs/
+│
+├── sql/
+│   ├── 01_create_tables.sql
+│   └── 02_business_queries.sql
+│
+├── src/
+│   ├── db.py
+│   ├── gemini.py
+│   ├── main.py
+│   ├── python_analysis.py
+│   ├── schema_context.py
+│   └── sql_validator.py
+│
+├── .env
+├── requirements.txt
+└── README.md
